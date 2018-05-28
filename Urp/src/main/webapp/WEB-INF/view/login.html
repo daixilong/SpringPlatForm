@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script type="text/javascript" src="/js/jquery.min.js" ></script>
+    <script type="text/javascript">
+        $(function(){
+            $.fn.serializeJson = function() {
+                var serializeObj = {};
+                var array = this.serializeArray();
+                var str = this.serialize();
+                $(array).each(
+                        function() {
+                            if (serializeObj[this.name]) {
+                                if ($.isArray(serializeObj[this.name])) {
+                                    serializeObj[this.name].push(this.value);
+                                } else {
+                                    serializeObj[this.name] = [
+                                        serializeObj[this.name], this.value ];
+                                }
+                            } else {
+                                serializeObj[this.name] = this.value;
+                            }
+                        });
+                return serializeObj;
+            };
+            $("input[type='button']").click(function(){
+
+                var obj={
+                    id:1,
+                    name:2
+                };
+
+                $.ajax({
+                    type:"POST",
+                    contentType:'application/json',
+                    url:"/add",
+                    data:JSON.stringify($("#frm").serializeJson()),
+                    dataType:'json',
+                    success:function(data){
+                        alert(data.msg);
+                    },
+                    failure:function(data){
+                        alert(data);
+                    },
+                    error:function(data){
+                        alert(data.responseText);
+                    }
+                })
+            })
+        })
+    </script>
+</head>
+<body>
+<input type="button" value="检测校验" nam="btn" />
+</body>
+</html>
